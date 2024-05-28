@@ -2,11 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+  --primary-color: #5f259f; /* Couleur principale spécifiée dans l'énoncé */
+  --foreground-color: #000; /* Couleur du texte */
+  --background-start-color: #d6dbdc; /* Couleur de fond de départ */
+  --background-end-color: #ffffff; /* Couleur de fond de fin */}
+/*
+:root {
+  --primary-color: #5f259f;
+}*/
 
 @media (prefers-color-scheme: dark) {
   :root {
@@ -30,4 +35,18 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+
+
+/* Utilisation de la couleur principale pour les accents */
+.primary {
+  color: var(--primary-color);
+}
+
+/* Modifier les styles des composants selon les besoins */
+/* Exemple : Modifier le style du bouton de recherche */
+.MuiButton-containedPrimary {
+  background-color: var(--primary-color);
+  color: white; /* Couleur du texte pour le bouton */
 }
