@@ -42,7 +42,7 @@ const spaceTypes = [
   'Promenades ouvertes'
 ];
 
-const fountainTypes = [
+const fontainTypes = [
   'BORNE_FONTAINE',
   'FONTAINE_2EN1',
   'FONTAINE_ALBIEN',
@@ -54,16 +54,19 @@ const fountainTypes = [
   'FTNE_PETILLANTE',
   'FTNE_POING_EAU'
 ];
-
+const payantTypes = [
+  'Oui',
+  'Non'];
 const App: React.FC = () => {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [allResults, setAllResults] = useState<SearchResult[]>([]);
   const [filters, setFilters] = useState({
     type: '',
     open247: '',
-    fountainType: '', // Changement : retirer le filtre de type pour les fontaines
+    fontainType: '',
     globalSearch: '',
-    currentDataset: 'espacesVerts'
+    currentDataset: 'espacesVerts',
+    payant: ''
   });
   const [currentPage, setCurrentPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -119,9 +122,14 @@ const App: React.FC = () => {
     const newFilteredResults = allResults.filter(result => {
       return (
         (!filters.type || (result.type && result.type.includes(filters.type))) &&
-        (!filters.equipmentType || result.type === filters.equipmentType) && // Modification: Remplacer filters.equipmentType par filters.fountainType
-        (!filters.fountainType || result.type === filters.fountainType) && // Ajout du filtre pour le type de fontaine
+        (!filters.equipmentType || result.type === filters.equipmentType) &&
+//        ((!filters.fontainType || result.type === filters.fontainType)  
+//      (filters.fontainType && result.usage === filters.fontainType)&&
+        (!filters.fontainType || result.usage === filters.fontainType)&&
         (!filters.open247 || result.open247 === filters.open247) &&
+        (!filters.payant || 
+          (filters.payant === 'Oui' && result.price === 1) ||
+          (filters.payant === 'Non' && result.price === 0)) &&
         (globalSearchLower === '' ||
           (result.name && result.name.toLowerCase().includes(globalSearchLower)) ||
           (result.address && result.address.toLowerCase().includes(globalSearchLower)) ||
@@ -189,22 +197,38 @@ const App: React.FC = () => {
               </Select>
             </FormControl>
           )}
-{/*           {filters.currentDataset === 'fontaines' && (
+          {filters.currentDataset === 'equipements' && (
             <FormControl variant="outlined" fullWidth margin="normal">
-              <InputLabel>Type de Fontaine</InputLabel>
+              <InputLabel>Payant</InputLabel>
               <Select
-                name="fountainType"
-                value={filters.fountainType}
+                name="payant"
+                value={filters.payant}
                 onChange={handleFilterChange}
-                label="Type de Fontaine"
+                label="Payant"
               >
-                <MenuItem value=""><em>Aucun</em></MenuItem>
-                {fountainTypes.map(type => (
+                <MenuItem value=""><em>Tous</em></MenuItem>
+                {payantTypes.map(type => (
                   <MenuItem key={type} value={type}>{type}</MenuItem>
                 ))}
               </Select>
             </FormControl>
-          )} */}
+          )}
+          {filters.currentDataset === 'fontaines' && (
+            <FormControl variant="outlined" fullWidth margin="normal">
+              <InputLabel>Type de Fontaine</InputLabel>
+              <Select
+                name="fontainType"
+                value={filters.fontainType}
+                onChange={handleFilterChange}
+                label="Type de Fontaine"
+              >
+                <MenuItem value=""><em>Aucun</em></MenuItem>
+                {fontainTypes.map(type => (
+                  <MenuItem key={type} value={type}>{type}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
           {filters.currentDataset === 'espacesVerts' && (
             <FormControl variant="outlined" fullWidth margin="normal">
               <InputLabel>OUVERTURE 24-24H</InputLabel>
@@ -234,7 +258,7 @@ const App: React.FC = () => {
                   <TableCell>Nom</TableCell>
                   <TableCell>Adresse</TableCell>
                   <TableCell>Type</TableCell>
-                  <TableCell>Prix</TableCell>
+                  <TableCell>Payant (O/N)</TableCell>
                   <TableCell>Disponibilité</TableCell>
                   <TableCell>OUVERTURE 24-24H</TableCell>
                 </TableRow>
